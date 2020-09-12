@@ -1,2 +1,2 @@
-# enduro
-Enduro type game, implemented in JavaScript
+# Enduro
+An Enduro type game, implemented in JavaScript
