@@ -10,7 +10,7 @@ const wall = (x) => {
     return {x, y, width, height};
 }
 
-const car = (x, y, line) => {
+const element = (x, y, line) => {
     width = 50;
     height = 50;
 
@@ -57,21 +57,21 @@ let leftWall = wall(canvas.width / 4 - 2);
 let rightWall = wall(canvas.width * (3 / 4) - 2);
 
 // Create the player
-let player = car(canvas.width / 2 - 25, canvas.height - 55, 1)
+let player = element(canvas.width / 2 - 25, canvas.height - 55, 1);
 
 // Create the obstacles
-let obstacle = {}
+let obstacle = {};
 
 const createObstacle = (() => {
     for (let i = 0; i < 6; i++) {
         if (i < 2) {
-            obstacle[i] = car(getPosition3x(), -50, 3);
+            obstacle[i] = element(getPosition3x(), -50, 3);
         } else if (i < 4) {
-            obstacle[i] = car(getPosition2x(), -250, 2);
+            obstacle[i] = element(getPosition2x(), -250, 2);
         } else if (i < 6) {
-            obstacle[i] = car(getPosition3x(), -450, 3);
+            obstacle[i] = element(getPosition3x(), -450, 3);
         } 
-    }
+     }
 })()
 
 let gameState = 'start';
@@ -91,9 +91,10 @@ function draw() {
     ctx.fillRect(leftWall.x, leftWall.y, leftWall.width, leftWall.height);
     ctx.fillRect(rightWall.x, rightWall.y, rightWall.width, rightWall.height);
 
-    // Create obstacles and draw them
+    // Create obstacles and draw them if game over
     for (let i = 0; i < 6; i++) {
         ctx.fillRect(obstacle[i].x, obstacle[i].y, obstacle[i].width, obstacle[i].height);
+        
     }
 
     // Define font and alignment of screen text
@@ -107,35 +108,31 @@ function draw() {
     // Display message
     if (gameState === 'start') {
         ctx.fillText('Press Enter to start!', canvas.width / 2, 125)
-        ctx.fillText('Press Escape to pause!', canvas.width / 2, 200)
+        ctx.fillText('Press Space to pause!', canvas.width / 2, 200)
+        ctx.fillText('Press Enter', 660, 75)
     }
-    if (gameState === 'play') {
-        ctx.fillText('Press', 660, 75)
-        ctx.fillText('Escape', 660, 125)
-    } else {
-        ctx.fillText('Press Enter', 658, 75)
+    if (gameState === 'play' || gameState === 'pause') {
+        ctx.fillText('Press Space', 660, 75)
     }
-    
-    
-
+    if (gameState === 'gameOver') {
+        ctx.fillText('Press Escape to restart!', canvas.width / 2, 200)
+        ctx.fillText('Press Esc', 660, 75)
+    }
 }
 
 // Variables to control elements speed
 const dx = 75;
-let dy = 2;
+let dy = 1;
 
 function playerInput(e) {
-    if (e.key === 'Enter') {
-        if (gameState === 'start' ||  gameState === 'pause') {
-            gameState = 'play'
-        } else if (gameState === 'gameOver') {
-            gameState = 'play'
-            resetGame()
-        }
+    if (e.key === 'Enter' && gameState === 'start') {
+        gameState = 'play';
     }
     
-    if (gameState === 'play' && e.key === 'Escape') {
-        gameState = 'pause'
+    if (gameState === 'play' && e.key === ' ') {
+        gameState = 'pause';
+    } else if (gameState === 'pause' && e.key === ' ') {
+        gameState = 'play'
     }
 
     if (gameState === 'play') {
@@ -145,6 +142,11 @@ function playerInput(e) {
         if ((e.key === 'd' || e.key === 'ArrowRight') && player.x < 500) {
             player.x += dx;
         }
+    }
+
+    if (gameState === 'gameOver' && e.key === 'Escape') {
+        resetGame()
+        gameState = 'start'
     }
 }
 
@@ -159,6 +161,9 @@ function moveObstacle() {
                 obstacle[i].x = getPosition2x() 
             }
         } 
+    }
+    if (distance > 1000) {
+        dy = Math.floor(distance / 1000)
     }
 }
 
@@ -175,16 +180,28 @@ function collisionDetect() {
 let distance = 0;
 
 function getScore() {
-    if (distance > 0 && distance % 100 === 0) {
-        score += 1
+    let turn = Math.floor(distance / 1000)
+    
+    if (distance < 1000) {
+        score = Math.floor(distance / 100)
+    } else {
+        score = Math.floor(distance / 100) * turn
     }
 }
 
-// Function to reset values and elements position after game over
 function resetGame() {
-    if (gameState === 'gameOver') {
-        draw()
+    for (let i = 0; i < 6; i++) {
+        if (i < 2) {
+            obstacle[i] = element(getPosition3x(), -50, 3);
+        } else if (i < 4) {
+            obstacle[i] = element(getPosition2x(), -250, 2);
+        } else if (i < 6) {
+            obstacle[i] = element(getPosition3x(), -450, 3);
+        } 
     }
+    player.x = canvas.width / 2 - 25;
+    distance = 0;
+    score = 0
 }
 
 // function to control the game
@@ -194,10 +211,10 @@ function playGame() {
     document.addEventListener('keydown', playerInput);
 
     if (gameState === 'play') {
-        moveObstacle();
         collisionDetect();
-        distance += 1
-        getScore()
+        moveObstacle();
+        distance += 1;
+        getScore();
     }  
 
     requestAnimationFrame(playGame)
