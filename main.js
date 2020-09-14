@@ -115,7 +115,9 @@ function draw() {
         ctx.fillText('Press Space', 660, 75)
     }
     if (gameState === 'gameOver') {
+        ctx.fillStyle = '#gray';
         ctx.fillText('Press Escape to restart!', canvas.width / 2, 200)
+        ctx.fillStyle = '#fff';
         ctx.fillText('Press Esc', 660, 75)
     }
 }
