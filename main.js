@@ -201,7 +201,8 @@ function resetGame() {
     }
     player.x = canvas.width / 2 - 25;
     distance = 0;
-    score = 0
+    score = 0;
+    dy = 1;
 }
 
 // function to control the game
