@@ -123,10 +123,11 @@ function draw() {
 }
 
 // Variables to control elements speed
-const dx = 75;
 let dy = 1;
 
 function playerInput(e) {
+    const dx = 75;
+    
     if (e.key === 'Enter' && gameState === 'start') {
         gameState = 'play';
     }
