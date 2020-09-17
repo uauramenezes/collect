@@ -7,7 +7,7 @@ const player = {
     y: canvas.height - 51,
     width: 50,
     height: 50,
-    dx: 10
+    dx: 20
 }
 
 // Function factory to create elements
@@ -132,8 +132,8 @@ function moveObstacle() {
     for (let i = 1; i < 5; i++) {
         obstacle[i].y += dy
     }
-    if (score > 10) {
-        dy = Math.floor(score / 10)
+    if (score > 20) {
+        dy = score / 20
     }
 }
 
