@@ -7,7 +7,7 @@ const player = {
     y: canvas.height - 51,
     width: 50,
     height: 50,
-    dx: 5
+    dx: 10
 }
 
 // Function factory to create elements
@@ -28,8 +28,8 @@ const element = (x, y) => {
 
 // Get random x position of elements
 function getPositionX() {
-    const min = canvas.width / 4 + 7
-    const max = canvas.width * (3 / 4) - 7
+    const min = canvas.width / 4 + 15
+    const max = canvas.width * (3 / 4) - 17
     let randomX = Math.floor((Math.random() * (max - min)) + min); 
     return randomX
 }
@@ -50,14 +50,6 @@ function createObstacle() {
         obstacle[i] = element(getPositionX(), yPos)
         yPos -= 150
     }
-    /*
-    let i = 0;
-    while (yPos > -canvas.height){
-        i += 1
-        obstacle[i] = element(getPositionX(), yPos)
-        yPos -= 150
-    }
-    */
 }
 
 createObstacle()
@@ -108,8 +100,6 @@ function draw() {
         ctx.fillText('Press Esc', 660, 75)
     }
 }
-
-// Variables to control elements speed
 
 function playerInput(e) {
     if (e.key === 'Enter' && gameState === 'start') {
