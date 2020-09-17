@@ -7,7 +7,7 @@ const player = {
     y: canvas.height - 51,
     width: 50,
     height: 50,
-    dx: 20
+    dx: 75
 }
 
 // Function factory to create elements
@@ -28,9 +28,12 @@ const element = (x, y) => {
 
 // Get random x position of elements
 function getPositionX() {
-    const min = canvas.width / 4 + 15
-    const max = canvas.width * (3 / 4) - 17
-    let randomX = Math.floor((Math.random() * (max - min)) + min); 
+    //const min = canvas.width / 4 + 15
+    //const max = canvas.width * (3 / 4) - 17
+    //let randomX = Math.floor((Math.random() * (max - min)) + min); 
+    randomNumber = Math.floor(Math.random() * 5) + 1
+    randomX = 145 + (randomNumber * 75)
+    //randomX = 170 + (randomNumber * 50)
     return randomX
 }
 
