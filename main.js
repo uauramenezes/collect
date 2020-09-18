@@ -42,22 +42,17 @@ let leftWall = wall(canvas.width / 4 - 2);
 let rightWall = wall(canvas.width * (3 / 4) - 2);
 
 // Create the obstacles
-let obstacle = {};
+let obstacle = [];
 
 function createObstacle() {
-    let yPos = -50;
-
-    for (i = 1; i < 5; i++) {
-        obstacle[i] = obstacles(getPositionX(), yPos)
-        yPos -= 150
-    }
+    for (i = -50; i > -canvas.height; i -= 150)
+        obstacle.push(obstacles(getPositionX(), i))
 }
 
 createObstacle()
 
 let gameState = 'start';
 let score = 0;
-
 // Draw the elements on the screen
 function draw() {
     ctx.clearRect(0, 0, canvas.width, canvas.height);
@@ -74,7 +69,7 @@ function draw() {
 
     // Draw obstacles
     if (gameState !== 'gameOver') {
-        for (let i = 1; i < 5; i++) {
+        for (let i = 0; i < obstacle.length; i++) {
             ctx.fillRect(obstacle[i].x, obstacle[i].y, obstacle[i].width, obstacle[i].height);
         }
     }
@@ -135,10 +130,10 @@ function moveRight() {
 }
 
 function movePlayer() {
-        player.x += player.dx; 
+    player.x += player.dx; 
 }
 
-function keyUp(e) {
+function keyUp() {
     player.dx = 0
 }
 
@@ -148,8 +143,8 @@ document.addEventListener('keyup', keyUp)
 // move the obstacles
 let dy = 1;
 function moveObstacle() {
-        for (let i = 1; i < 5; i++) {
-            obstacle[i].y += dy
+    for (let i = 0; i < obstacle.length; i++) {
+        obstacle[i].y += dy
     }
     if (score > 20) {
         dy = score / 20
@@ -158,7 +153,7 @@ function moveObstacle() {
 
 // detect collision and add score or change game state
 function obstacleDetection() {
-    for (let i = 1; i < 5; i++) {
+    for (let i = 0; i < obstacle.length; i++) {
         if (player.y <= obstacle[i].y + obstacle[i].height &&
             player.x <= obstacle[i].x + obstacle[i].width &&
             player.x + player.width >= obstacle[i].x) {
