@@ -191,6 +191,7 @@ function sideDetection() {
 
 // reset the game
 function resetGame() {
+    obstacle.length = 0
     createObstacle()
     player.x = canvas.width / 2 - 25;
     distance = 0;
