@@ -20,7 +20,7 @@ const wall = (x) => {
     return {x, y, width, height};
 }
 
-const element = (x, y) => {
+const obstacles = (x, y) => {
     width = 10;
     height = 10;
 
@@ -32,9 +32,6 @@ function getPositionX() {
     const min = canvas.width / 4 + 15
     const max = canvas.width * (3 / 4) - 17
     let randomX = Math.floor((Math.random() * (max - min)) + min); 
-    //randomNumber = Math.floor(Math.random() * 5) + 1
-    //randomX = 145 + (randomNumber * 75)
-    //randomX = 170 + (randomNumber * 50)
     return randomX
 }
 
@@ -50,8 +47,8 @@ let obstacle = {};
 function createObstacle() {
     let yPos = -50;
 
-    for (i = 0; i < 5; i++) {
-        obstacle[i] = element(getPositionX(), yPos)
+    for (i = 1; i < 5; i++) {
+        obstacle[i] = obstacles(getPositionX(), yPos)
         yPos -= 150
     }
 }
@@ -94,14 +91,14 @@ function draw() {
     if (gameState === 'start') {
         ctx.fillText('Press Enter to start!', canvas.width / 2, 125)
         ctx.fillText('Press Space to pause!', canvas.width / 2, 200)
-        ctx.fillText('Press Enter', 660, 75)
+        ctx.fillText('Press Enter', canvas.width - (leftWall.x / 2), 75)
     }
     if (gameState === 'play' || gameState === 'pause') {
-        ctx.fillText('Press Space', 660, 75)
+        ctx.fillText('Press Space', canvas.width - (leftWall.x / 2), 75)
     }
     if (gameState === 'gameOver') {
         ctx.fillText('Press Escape to restart!', canvas.width / 2, 200)
-        ctx.fillText('Press Esc', 660, 75)
+        ctx.fillText('Press Esc', canvas.width - (leftWall.x / 2), 75)
     }
 }
 
@@ -138,7 +135,7 @@ function moveRight() {
 }
 
 function movePlayer() {
-    player.x += player.dx;    
+        player.x += player.dx; 
 }
 
 function keyUp(e) {
@@ -151,8 +148,8 @@ document.addEventListener('keyup', keyUp)
 // move the obstacles
 let dy = 1;
 function moveObstacle() {
-    for (let i = 1; i < 5; i++) {
-        obstacle[i].y += dy
+        for (let i = 1; i < 5; i++) {
+            obstacle[i].y += dy
     }
     if (score > 20) {
         dy = score / 20
@@ -175,7 +172,7 @@ function obstacleDetection() {
     }
 }
 
-function wallDetection() {
+function sideDetection() {
     if (player.x < leftWall.x + leftWall.width || player.x + player.width > rightWall.x) {
         if (score > 20) {
             dy = score / 30
@@ -188,6 +185,12 @@ function wallDetection() {
         } else {
             dy = 1
         }
+    }
+    if (player.x <= 0) {
+        player.x = 0
+    }
+    if (player.x >= canvas.width - player.width) {
+        player.x = canvas.width - player.width
     }
 }
 
@@ -206,7 +209,7 @@ function playGame() {
 
     if (gameState === 'play') {
         obstacleDetection();
-        wallDetection();
+        sideDetection();
         moveObstacle();
         movePlayer();
     }  
