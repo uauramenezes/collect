@@ -7,7 +7,8 @@ const player = {
     y: canvas.height - 51,
     width: 50,
     height: 50,
-    dx: 75
+    speed: 10,
+    dx: 0
 }
 
 // Function factory to create elements
@@ -28,11 +29,11 @@ const element = (x, y) => {
 
 // Get random x position of elements
 function getPositionX() {
-    //const min = canvas.width / 4 + 15
-    //const max = canvas.width * (3 / 4) - 17
-    //let randomX = Math.floor((Math.random() * (max - min)) + min); 
-    randomNumber = Math.floor(Math.random() * 5) + 1
-    randomX = 145 + (randomNumber * 75)
+    const min = canvas.width / 4 + 15
+    const max = canvas.width * (3 / 4) - 17
+    let randomX = Math.floor((Math.random() * (max - min)) + min); 
+    //randomNumber = Math.floor(Math.random() * 5) + 1
+    //randomX = 145 + (randomNumber * 75)
     //randomX = 170 + (randomNumber * 50)
     return randomX
 }
@@ -104,7 +105,8 @@ function draw() {
     }
 }
 
-function playerInput(e) {
+// from the keyboard input change game state and move player
+function keyDown(e) {
     if (e.key === 'Enter' && gameState === 'start') {
         gameState = 'play';
     }
@@ -115,21 +117,38 @@ function playerInput(e) {
         gameState = 'play'
     }
 
-    if (gameState === 'play') {
-        if ((e.key === 'a' || e.key === 'ArrowLeft') && player.x > 200) {
-            player.x -= player.dx;
-        }
-        if ((e.key === 'd' || e.key === 'ArrowRight') && player.x < 500) {
-            player.x += player.dx;
-        }
-    }
-
     if (gameState === 'gameOver' && e.key === 'Escape') {
         resetGame()
         gameState = 'start'
     }
+
+    if (e.key === 'a' || e.key === 'ArrowLeft') {
+        moveLeft()
+    } else if (e.key === 'd' || e.key === 'ArrowRight') {
+        moveRight()
+    }
 }
 
+function moveLeft() {
+    player.dx = -player.speed;
+}
+
+function moveRight() {
+    player.dx = player.speed;
+}
+
+function movePlayer() {
+    player.x += player.dx;    
+}
+
+function keyUp(e) {
+    player.dx = 0
+}
+
+document.addEventListener('keydown', keyDown);
+document.addEventListener('keyup', keyUp)
+
+// move the obstacles
 let dy = 1;
 function moveObstacle() {
     for (let i = 1; i < 5; i++) {
@@ -140,7 +159,8 @@ function moveObstacle() {
     }
 }
 
-function collisionDetect() {
+// detect collision and add score or change game state
+function obstacleDetection() {
     for (let i = 1; i < 5; i++) {
         if (player.y <= obstacle[i].y + obstacle[i].height &&
             player.x <= obstacle[i].x + obstacle[i].width &&
@@ -155,6 +175,23 @@ function collisionDetect() {
     }
 }
 
+function wallDetection() {
+    if (player.x < leftWall.x + leftWall.width || player.x + player.width > rightWall.x) {
+        if (score > 20) {
+            dy = score / 30
+        } else {
+            dy = 2 / 3
+        }
+    } else {
+        if (score > 20) {
+            dy = score / 20
+        } else {
+            dy = 1
+        }
+    }
+}
+
+// reset the game
 function resetGame() {
     createObstacle()
     player.x = canvas.width / 2 - 25;
@@ -167,11 +204,11 @@ function resetGame() {
 function playGame() {
     draw()
 
-    window.addEventListener('keydown', playerInput);
-
     if (gameState === 'play') {
-        collisionDetect();
+        obstacleDetection();
+        wallDetection();
         moveObstacle();
+        movePlayer();
     }  
 
     requestAnimationFrame(playGame)
